@@ -67,6 +67,8 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 #define TERM "st", "-e"
 #define DMENUOPS "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_gray2, "-sf", col_gray4, NULL
+#define SCREENSHOT  "scrot '%Y-%m-%d-%H-%M-%S.jpg' -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
+#define SCREENSHOTREGION  "sleep 0.4; scrot '%Y-%m-%d-%H-%M-%S.jpg' -s -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
@@ -145,6 +147,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,        	XK_BackSpace,              spawn,         {.v = cmdreboot } },
 	{ MODKEY|ShiftMask,        	XK_p,			   spawn,         {.v = passmenu} },
 	{ MODKEY|ShiftMask,        	XK_x,			   spawn,         {.v = cmdshutdown } },
+	{ 0,				XK_Print,		   spawn,	  SHCMD(SCREENSHOTREGION) },
+	{ ShiftMask,			XK_Print,		   spawn,	  SHCMD(SCREENSHOT) },
 };
 
 /* button definitions */
