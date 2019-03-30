@@ -52,6 +52,7 @@ static const Layout layouts[] = {
 	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 
 #define XF86AudioLowerVolume	0x1008ff11
+#define XF86AudioMicMute	0x1008ffb2
 #define XF86AudioMute		0x1008ff12
 #define XF86AudioNext		0x1008ff17
 #define XF86AudioPlay		0x1008ff14
@@ -86,6 +87,7 @@ static const char *cmdshutdown[]       = { "sudo", "shutdown", "-h", "now", NULL
 static const char *cmdsounddown[]      = { "amixer", "-q", "sset", "Master", "5%-", NULL };
 static const char *cmdsoundtoggle[]    = { "amixer", "-q", "sset", "Master", "toggle", NULL };
 static const char *cmdsoundup[]	       = { "amixer", "-q", "sset", "Master", "5%+", NULL };
+static const char *micmute[]	       = { "amixer", "-q", "sset", "Capture", "toggle", NULL };
 static const char *cmdstop[]	       = { "playerctl", "stop",  NULL };
 static const char *cmdtouchpadtoggle[] = { "touchpadtoggle.sh", NULL };
 static const char *irssi[]	       = { TERM, "sh", "-c", "tmux attach -t irssi || tmux new -s irssi irssi", NULL };
@@ -129,6 +131,7 @@ static Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 	{ 0,				XF86AudioLowerVolume,	   spawn,	  {.v = cmdsounddown } },
+	{ 0,				XF86AudioMicMute,	   spawn,	  {.v = micmute } },
 	{ 0,				XF86AudioNext,		   spawn,	  {.v = cmdnext } },
 	{ 0,				XF86AudioPlay,		   spawn,	  {.v = cmdplay } },
 	{ 0,				XF86AudioPrev,		   spawn,	  {.v = cmdprev } },
