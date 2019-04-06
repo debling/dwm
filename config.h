@@ -65,7 +65,7 @@ static const Layout layouts[] = {
 #define XF86TouchpadToggle      0x1008ffa9
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
-#define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
+#define SHCMD(sh, cmd) { .v = (const char*[]){ "/usr/bin/env", sh, "-c", cmd, NULL } }
 #define TERM "st", "-e"
 #define DMENUOPS "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_gray2, "-sf", col_gray4, NULL
 #define SCREENSHOT  "scrot '%Y-%m-%d-%H-%M-%S.jpg' -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
@@ -144,14 +144,14 @@ static Key keys[] = {
         { 0,                    XF86TouchpadToggle,     spawn,  {.v = touchpadtoggle } },
         { MODKEY,               XK_m,                   spawn,  {.v = mutt } },
         { MODKEY,               XK_n,                   spawn,  {.v = rss } },
-        { MODKEY,               XK_w,                   spawn,  SHCMD("$BROWSER") },
+        { MODKEY,               XK_w,                   spawn,  SHCMD("sh", "$BROWSER") },
         { MODKEY,               XK_y,                   spawn,  {.v = clipmenu } },
         { MODKEY|ControlMask,   XK_i,                   spawn,  {.v = irssi } },
         { MODKEY|ShiftMask,     XK_BackSpace,           spawn,  {.v = reboot } },
         { MODKEY|ShiftMask,     XK_p,                   spawn,  {.v = passmenu} },
         { MODKEY|ShiftMask,     XK_x,                   spawn,  {.v = shutdown } },
-        { 0,                    XK_Print,               spawn,  SHCMD(SCREENSHOTREGION) },
-        { ShiftMask,            XK_Print,               spawn,  SHCMD(SCREENSHOT) },
+        { 0,                    XK_Print,               spawn,  SHCMD("sh", SCREENSHOTREGION) },
+        { ShiftMask,            XK_Print,               spawn,  SHCMD("sh", SCREENSHOT) },
 };
 
 /* button definitions */
