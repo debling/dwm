@@ -68,8 +68,8 @@ static const Layout layouts[] = {
 #define SHCMD(sh, cmd) { .v = (const char*[]){ "/usr/bin/env", sh, "-c", cmd, NULL } }
 #define TERM "st", "-e"
 #define DMENUOPS "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_gray2, "-sf", col_gray4, NULL
-#define SCREENSHOT  "scrot '%Y-%m-%d-%H-%M-%S.jpg' -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
-#define SCREENSHOTREGION  "sleep 0.4; scrot '%Y-%m-%d-%H-%M-%S.jpg' -s -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
+#define SCREENSHOT  "scrot '%Y-%m-%d-%H-%M-%S.png' -q 90 -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
+#define SCREENSHOTREGION  "sleep 0.4; scrot '%Y-%m-%d-%H-%M-%S.png' -q 90 -s -e 'xclip -selection clipboard -t image/png \"$f\"; mv \"$f\" ~/Pictures/Screenshots'"
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
