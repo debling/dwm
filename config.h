@@ -7,11 +7,12 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "mono:pixelsize=10" };
 static const char dmenufont[]       = "mono:pixelsize=10";
-static const char col_gray1[]       = "#657b83"; //05
-static const char col_gray2[]       = "#fdf6e3"; //00
-static const char col_gray3[]       = "#fdf6e3"; //00
-static const char col_gray4[]       = "#657b83"; //05
-static const char col_cyan[]        = "#93a1a1"; //02
+static const char col_gray1[]       = "#000000"; //05
+static const char col_gray2[]       = "#ffffff"; //00
+static const char col_gray3[]       = "#ffffff"; //00
+static const char col_gray4[]       = "#000000"; //05
+/* static const char col_cyan[]        = "#1d1f21"; //07 */
+static const char col_cyan[]        = "#3e999f"; //07
 static const char *colors[][3]      = {
         /*               fg         bg         border   */
         [SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
@@ -28,13 +29,15 @@ static const Rule rules[] = {
          */
         /* class      instance    title       tags mask     isfloating   monitor */
         { "Gimp",     NULL,       NULL,       0,            1,           -1 },
-//      { "Firefox",  NULL,       NULL,       1 << 2,       0,           -1 },
+	{ "mpv",      NULL,       NULL,       0,            1,           -1 },
+	{ "sxiv",     NULL,       NULL,       0,            1,           -1 },
+	{ "Firefox",  "Toolkit",  "Picture-in-Picture",     0,  1,  -1 },
 };
 
 /* layout(s) */
 static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
         /* symbol     arrange function */
@@ -73,12 +76,12 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[]       = { "dmenu_run", DMENUOPS};
+static const char *dmenucmd[]       = { "dmenu_run", DMENUOPS, NULL};
 static const char *termcmd[]        = { "st", NULL };
 static const char *brightnessdown[] = { "xbacklight", "-2", NULL };
 static const char *brightnessup[]   = { "xbacklight", "+2", NULL };
-static const char *clipmenu[]       = { "clipmenu", DMENUOPS };
-static const char *irssi[]          = { TERM, "sh", "-c", "tmux attach -t irssi || tmux new -s irssi irssi", NULL };
+static const char *clipmenu[]       = { "sh", "-c", "clipmenu", DMENUOPS };
+static const char *irssi[]          = { TERM, "bash", "-ic", "tmux attach -t irssi || tmux new -s irssi irssi", NULL };
 static const char *lock[]           = { "loginctl", "lock-session", NULL };
 static const char *micmute[]        = { "amixer", "-q", "sset", "Capture", "toggle", NULL };
 static const char *mutt[]           = { TERM, "bash", "-ic", "neomutt", NULL };
@@ -98,7 +101,7 @@ static const char *touchpadtoggle[] = { "touchpadtoggle.sh", NULL };
 static Key keys[] = {
         /* modifier                     key        function        argument */
         { MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-        { MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
+        /* { MODKEY,                       XK_Return, spawn,          SHCMD("sh", "$TERMINAL") }, */
         { MODKEY,                       XK_b,      togglebar,      {0} },
         { MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
         { MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -116,10 +119,10 @@ static Key keys[] = {
         { MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
         { MODKEY,                       XK_0,      view,           {.ui = ~0 } },
         { MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-        { MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-        { MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-        { MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-        { MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+        { MODKEY,                       XK_comma,  focusmon,       {.i = +1 } },
+        { MODKEY,                       XK_period, focusmon,       {.i = -1 } },
+        { MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = +1 } },
+        { MODKEY|ShiftMask,             XK_period, tagmon,         {.i = -1 } },
         TAGKEYS(                        XK_1,                      0)
         TAGKEYS(                        XK_2,                      1)
         TAGKEYS(                        XK_3,                      2)
@@ -130,28 +133,28 @@ static Key keys[] = {
         TAGKEYS(                        XK_8,                      7)
         TAGKEYS(                        XK_9,                      8)
         { MODKEY|ShiftMask,     XK_q,                   quit,   {0} },
-        { 0,                    XF86AudioLowerVolume,   spawn,  {.v = sounddown } },
-        { 0,                    XF86AudioMicMute,       spawn,  {.v = micmute } },
-        { 0,                    XF86AudioNext,          spawn,  {.v = next } },
-        { 0,                    XF86AudioPlay,          spawn,  {.v = play } },
-        { 0,                    XF86AudioPrev,          spawn,  {.v = prev } },
-        { 0,                    XF86AudioStop,          spawn,  {.v = stop } },
-        { 0,                    XF86AudioMute,          spawn,  {.v = soundtoggle } },
-        { 0,                    XF86AudioRaiseVolume,   spawn,  {.v = soundup } },
-        { 0,                    XF86MonBrightnessDown,  spawn,  {.v = brightnessdown } },
-        { 0,                    XF86MonBrightnessUp,    spawn,  {.v = brightnessup } },
-        { 0,                    XF86ScreenSaver,        spawn,  {.v = lock } },
-        { 0,                    XF86TouchpadToggle,     spawn,  {.v = touchpadtoggle } },
-        { MODKEY,               XK_m,                   spawn,  {.v = mutt } },
-        { MODKEY,               XK_n,                   spawn,  {.v = rss } },
-        { MODKEY,               XK_w,                   spawn,  SHCMD("sh", "$BROWSER") },
-        { MODKEY,               XK_y,                   spawn,  {.v = clipmenu } },
-        { MODKEY|ControlMask,   XK_i,                   spawn,  {.v = irssi } },
-        { MODKEY|ShiftMask,     XK_BackSpace,           spawn,  {.v = reboot } },
-        { MODKEY|ShiftMask,     XK_p,                   spawn,  {.v = passmenu} },
-        { MODKEY|ShiftMask,     XK_x,                   spawn,  {.v = shutdown } },
-        { 0,                    XK_Print,               spawn,  SHCMD("sh", SCREENSHOTREGION) },
-        { ShiftMask,            XK_Print,               spawn,  SHCMD("sh", SCREENSHOT) },
+        /* { 0,                    XF86AudioLowerVolume,   spawn,  {.v = sounddown } }, */
+        /* { 0,                    XF86AudioMicMute,       spawn,  {.v = micmute } }, */
+        /* { 0,                    XF86AudioNext,          spawn,  {.v = next } }, */
+        /* { 0,                    XF86AudioPlay,          spawn,  {.v = play } }, */
+        /* { 0,                    XF86AudioPrev,          spawn,  {.v = prev } }, */
+        /* { 0,                    XF86AudioStop,          spawn,  {.v = stop } }, */
+        /* { 0,                    XF86AudioMute,          spawn,  {.v = soundtoggle } }, */
+        /* { 0,                    XF86AudioRaiseVolume,   spawn,  {.v = soundup } }, */
+        /* { 0,                    XF86MonBrightnessDown,  spawn,  {.v = brightnessdown } }, */
+        /* { 0,                    XF86MonBrightnessUp,    spawn,  {.v = brightnessup } }, */
+        /* { 0,                    XF86ScreenSaver,        spawn,  {.v = lock } }, */
+        /* { 0,                    XF86TouchpadToggle,     spawn,  {.v = touchpadtoggle } }, */
+        /* { MODKEY,               XK_m,                   spawn,  {.v = mutt } }, */
+        /* { MODKEY,               XK_n,                   spawn,  {.v = rss } }, */
+        /* { MODKEY,               XK_w,                   spawn,  SHCMD("sh", "$BROWSER") }, */
+        /* { MODKEY,               XK_y,                   spawn,  {.v = clipmenu } }, */
+        /* { MODKEY|ControlMask,   XK_i,                   spawn,  {.v = irssi } }, */
+        /* { MODKEY|ShiftMask,     XK_BackSpace,           spawn,  {.v = reboot } }, */
+        /* { MODKEY|ShiftMask,     XK_p,                   spawn,  {.v = passmenu} }, */
+        /* { MODKEY|ShiftMask,     XK_x,                   spawn,  {.v = shutdown } }, */
+        /* { 0,                    XK_Print,               spawn,  SHCMD("sh", SCREENSHOTREGION) }, */
+        /* { ShiftMask,            XK_Print,               spawn,  SHCMD("sh", SCREENSHOT) }, */
 };
 
 /* button definitions */
